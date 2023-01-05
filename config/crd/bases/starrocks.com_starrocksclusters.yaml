@@ -187,6 +187,10 @@ spec:
                       - storageSize
                       type: object
                     type: array
+                  nodeSelector:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - image
                 type: object
@@ -955,6 +959,10 @@ spec:
                           ClusterIP, NodePort, LoadBalancer,ExternalName'
                         type: string
                     type: object
+                  nodeSelector:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - image
                 type: object
@@ -1091,6 +1099,10 @@ spec:
                       - storageSize
                       type: object
                     type: array
+                  nodeSelector:
+                    additionalProperties:
+                      type: string
+                    type: object
                 required:
                 - image
                 type: object

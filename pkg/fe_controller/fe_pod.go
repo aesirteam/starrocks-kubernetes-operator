@@ -35,7 +35,7 @@ const (
 	env_fe_config_path = "CONFIGMAP_MOUNT_PATH"
 )
 
-//fePodLabels generate the fe pod labels and statefulset selector
+// fePodLabels generate the fe pod labels and statefulset selector
 func fePodLabels(src *srapi.StarRocksCluster, ownerReferenceName string) rutils.Labels {
 	labels := rutils.Labels{}
 	labels[srapi.OwnerReference] = ownerReferenceName
@@ -44,7 +44,7 @@ func fePodLabels(src *srapi.StarRocksCluster, ownerReferenceName string) rutils.
 	return labels
 }
 
-//buildPodTemplate construct the podTemplate for deploy fe.
+// buildPodTemplate construct the podTemplate for deploy fe.
 func (fc *FeController) buildPodTemplate(src *srapi.StarRocksCluster, feconfig map[string]interface{}) corev1.PodTemplateSpec {
 	metaname := src.Name + "-" + srapi.DEFAULT_FE
 	feSpec := src.Spec.StarRocksFeSpec
@@ -220,6 +220,7 @@ func (fc *FeController) buildPodTemplate(src *srapi.StarRocksCluster, feconfig m
 		Containers:                    []corev1.Container{feContainer},
 		ServiceAccountName:            src.Spec.ServiceAccount,
 		TerminationGracePeriodSeconds: rutils.GetInt64ptr(int64(120)),
+		NodeSelector:                  feSpec.NodeSelector,
 	}
 
 	return corev1.PodTemplateSpec{

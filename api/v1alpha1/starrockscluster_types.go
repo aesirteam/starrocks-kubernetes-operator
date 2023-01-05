@@ -84,7 +84,7 @@ const (
 	ComponentWaiting = "waiting"
 )
 
-//StarRocksFeStatus the status of starrocksfe.
+// StarRocksFeStatus the status of starrocksfe.
 type StarRocksFeStatus struct {
 	ServiceName       string      `json:"serviceName,omitempty"`
 	FailedInstances   []string    `json:"failedInstances,omitempty"`
@@ -120,14 +120,14 @@ type StarRocksCnStatus struct {
 }
 
 // StarRocksCluster is the Schema for the starrocksclusters API
-//+kubebuilder:object:root=true
-//+kubebuilder:resource:shortName=src
-//+k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-//+kubebuilder:subresource:status
-//+kubebuilder:printcolumn:name="FeStatus",type=string,JSONPath=`.status.starRocksFeStatus.phase`
-//+kubebuilder:printcolumn:name="CnStatus",type=string,JSONPath=`.status.starRocksCnStatus.phase`
-//+kubebuilder:printcolumn:name="BeStatus",type=string,JSONPath=`.status.starRocksBeStatus.phase`
-//+kubebuilder:storageversion
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:shortName=src
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="FeStatus",type=string,JSONPath=`.status.starRocksFeStatus.phase`
+// +kubebuilder:printcolumn:name="CnStatus",type=string,JSONPath=`.status.starRocksCnStatus.phase`
+// +kubebuilder:printcolumn:name="BeStatus",type=string,JSONPath=`.status.starRocksBeStatus.phase`
+// +kubebuilder:storageversion
 // +k8s:openapi-gen=true
 type StarRocksCluster struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -144,7 +144,7 @@ const (
 	CommandProbeType string = "command"
 )
 
-//StarRocksFeSpec defines the desired state of fe.
+// StarRocksFeSpec defines the desired state of fe.
 // +k8s:openapi-gen=true
 type StarRocksFeSpec struct {
 	//name of the starrocks be cluster.
@@ -178,9 +178,13 @@ type StarRocksFeSpec struct {
 	//StorageVolumes defines the additional storage for fe
 	//+optional
 	StorageVolumes []StorageVolume `json:"storageVolumes,omitempty"`
+
+	//NodeSelector is the Kubernetes node selector for fe
+	//+optional
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 }
 
-//StarRocksBeSpec defines the desired state of be.
+// StarRocksBeSpec defines the desired state of be.
 // +k8s:openapi-gen=true
 type StarRocksBeSpec struct {
 	//Replicas is the number of desired be Pod
@@ -221,9 +225,13 @@ type StarRocksBeSpec struct {
 	//+deprecated, temp deprecated.
 
 	ReplicaInstances []string `json:"ReplicaInstances,omitempty"`
+
+	//NodeSelector is the Kubernetes node selector for be
+	//+optional
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 }
 
-//StarRocksCnSpec defines the desired state of cn.
+// StarRocksCnSpec defines the desired state of cn.
 // +k8s:openapi-gen=true
 type StarRocksCnSpec struct {
 	//name of the starrocks be cluster.
@@ -260,6 +268,10 @@ type StarRocksCnSpec struct {
 
 	//AutoScalingPolicy auto scaling strategy
 	AutoScalingPolicy *AutoScalingPolicy `json:"autoScalingPolicy,omitempty"`
+
+	//NodeSelector is the Kubernetes node selector for cn
+	//+optional
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 }
 
 type ConfigMapInfo struct {
@@ -270,7 +282,7 @@ type ConfigMapInfo struct {
 	ResolveKey string `json:"resolveKey,omitempty"`
 }
 
-//StorageVolume defines additional PVC template for StatefulSets and volumeMount for pods that mount this PVC
+// StorageVolume defines additional PVC template for StatefulSets and volumeMount for pods that mount this PVC
 type StorageVolume struct {
 	//name of a storage volume.
 	// +kubebuilder:validation:Pattern=[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*
@@ -309,7 +321,7 @@ type StarRocksServicePort struct {
 	NodePort      int32  `json:"nodePort,omitempty"`
 }
 
-//StarRocksProbe defines the mode for probe be alive.
+// StarRocksProbe defines the mode for probe be alive.
 type StarRocksProbe struct {
 	//Type identifies the mode of probe main container
 	// +kubebuilder:validation:Enum=tcp;command
@@ -328,7 +340,7 @@ type StarRocksProbe struct {
 	PeriodSeconds *int32 `json:"periodSeconds,omitempty"`
 }
 
-//+kubebuilder:object:root=true
+// +kubebuilder:object:root=true
 // StarRocksClusterList contains a list of StarRocksCluster
 // +k8s:openapi-gen=true
 type StarRocksClusterList struct {

@@ -92,9 +92,9 @@ type ComputeNodeGroupStatus struct {
 	Replicas int32 `json:"replicas"`
 }
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-//+kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.labelSelector
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.labelSelector
 // ComputeNodeGroup is the Schema for the computenodegroups API
 type ComputeNodeGroup struct {
 	metav1.TypeMeta   `json:",inline"`

@@ -17,12 +17,13 @@ limitations under the License.
 package be_controller
 
 import (
+	"strconv"
+
 	srapi "github.com/StarRocks/starrocks-kubernetes-operator/api/v1alpha1"
 	rutils "github.com/StarRocks/starrocks-kubernetes-operator/pkg/common/resource_utils"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"strconv"
 )
 
 const (
@@ -34,7 +35,7 @@ const (
 	env_be_config_path = "CONFIGMAP_MOUNT_PATH"
 )
 
-//cnPodLabels
+// cnPodLabels
 func (be *BeController) bePodLabels(src *srapi.StarRocksCluster, ownerReferenceName string) rutils.Labels {
 	labels := rutils.Labels{}
 	labels[srapi.OwnerReference] = ownerReferenceName
@@ -43,7 +44,7 @@ func (be *BeController) bePodLabels(src *srapi.StarRocksCluster, ownerReferenceN
 	return labels
 }
 
-//buildPodTemplate construct the podTemplate for deploy cn.
+// buildPodTemplate construct the podTemplate for deploy cn.
 func (be *BeController) buildPodTemplate(src *srapi.StarRocksCluster, beconfig map[string]interface{}) corev1.PodTemplateSpec {
 	metaname := src.Name + "-" + srapi.DEFAULT_BE
 	beSpec := src.Spec.StarRocksBeSpec
@@ -208,6 +209,7 @@ func (be *BeController) buildPodTemplate(src *srapi.StarRocksCluster, beconfig m
 		Volumes:                       vols,
 		ServiceAccountName:            src.Spec.ServiceAccount,
 		TerminationGracePeriodSeconds: rutils.GetInt64ptr(int64(120)),
+		NodeSelector:                  beSpec.NodeSelector,
 	}
 
 	return corev1.PodTemplateSpec{

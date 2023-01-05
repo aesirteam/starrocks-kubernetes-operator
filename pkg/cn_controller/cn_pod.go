@@ -17,12 +17,13 @@ limitations under the License.
 package cn_controller
 
 import (
+	"strconv"
+
 	srapi "github.com/StarRocks/starrocks-kubernetes-operator/api/v1alpha1"
 	rutils "github.com/StarRocks/starrocks-kubernetes-operator/pkg/common/resource_utils"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"strconv"
 )
 
 const (
@@ -32,7 +33,7 @@ const (
 	env_cn_config_path = "CONFIGMAP_MOUNT_PATH"
 )
 
-//cnPodLabels
+// cnPodLabels
 func (cc *CnController) cnPodLabels(src *srapi.StarRocksCluster, ownerReferenceName string) rutils.Labels {
 	labels := rutils.Labels{}
 	labels[srapi.OwnerReference] = ownerReferenceName
@@ -41,7 +42,7 @@ func (cc *CnController) cnPodLabels(src *srapi.StarRocksCluster, ownerReferenceN
 	return labels
 }
 
-//buildPodTemplate construct the podTemplate for deploy cn.
+// buildPodTemplate construct the podTemplate for deploy cn.
 func (cc *CnController) buildPodTemplate(src *srapi.StarRocksCluster, cnconfig map[string]interface{}) corev1.PodTemplateSpec {
 	metaname := src.Name + "-" + srapi.DEFAULT_CN
 	cnSpec := src.Spec.StarRocksCnSpec
@@ -182,6 +183,7 @@ func (cc *CnController) buildPodTemplate(src *srapi.StarRocksCluster, cnconfig m
 		Volumes:                       vols,
 		ServiceAccountName:            src.Spec.ServiceAccount,
 		TerminationGracePeriodSeconds: rutils.GetInt64ptr(int64(120)),
+		NodeSelector:                  cnSpec.NodeSelector,
 	}
 
 	return corev1.PodTemplateSpec{
