@@ -133,6 +133,16 @@ func (cc *CnController) buildPodTemplate(src *srapi.StarRocksCluster, cnconfig m
 			}, {
 				Name:  "USER",
 				Value: "root",
+			}, {
+				Name: "MYSQL_PWD",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: cc.getSecret(src),
+						},
+						Key: "mysql_root_password",
+					},
+				},
 			},
 		},
 		Resources:       cnSpec.ResourceRequirements,

@@ -18,6 +18,8 @@ package cn_controller
 
 import (
 	"context"
+	"strconv"
+
 	srapi "github.com/StarRocks/starrocks-kubernetes-operator/api/v1alpha1"
 	rutils "github.com/StarRocks/starrocks-kubernetes-operator/pkg/common/resource_utils"
 	"github.com/StarRocks/starrocks-kubernetes-operator/pkg/k8sutils"
@@ -31,7 +33,6 @@ import (
 	"k8s.io/client-go/util/retry"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strconv"
 )
 
 type CnController struct {
@@ -329,4 +330,8 @@ func (cc *CnController) getFeConfig(ctx context.Context, feconfigMapInfo *srapi.
 // getCnDomainService get the cn service name for dns resolve.
 func (cc *CnController) getCnSearchService() string {
 	return "cn-domain-search"
+}
+
+func (cc *CnController) getSecret(src *srapi.StarRocksCluster) string {
+	return src.Name + "-" + "secret"
 }

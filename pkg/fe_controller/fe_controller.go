@@ -19,6 +19,7 @@ package fe_controller
 import (
 	"context"
 	"errors"
+
 	srapi "github.com/StarRocks/starrocks-kubernetes-operator/api/v1alpha1"
 	rutils "github.com/StarRocks/starrocks-kubernetes-operator/pkg/common/resource_utils"
 	"github.com/StarRocks/starrocks-kubernetes-operator/pkg/k8sutils"
@@ -211,6 +212,10 @@ func (fc *FeController) ClearResources(ctx context.Context, src *srapi.StarRocks
 // domain service have PublishNotReadyAddresses. while used PublishNotReadyAddresses, the fe start need all instance domain can resolve.
 func (fc *FeController) getSearchService() string {
 	return "fe-domain-search"
+}
+
+func (fc *FeController) getSecret(src *srapi.StarRocksCluster) string {
+	return src.Name + "-" + "secret"
 }
 
 func (fc *FeController) createOrUpdateFeService(ctx context.Context, svc *corev1.Service, config map[string]interface{}) error {

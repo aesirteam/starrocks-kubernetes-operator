@@ -18,6 +18,8 @@ package be_controller
 
 import (
 	"context"
+	"strconv"
+
 	srapi "github.com/StarRocks/starrocks-kubernetes-operator/api/v1alpha1"
 	rutils "github.com/StarRocks/starrocks-kubernetes-operator/pkg/common/resource_utils"
 	"github.com/StarRocks/starrocks-kubernetes-operator/pkg/k8sutils"
@@ -29,7 +31,6 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strconv"
 )
 
 type BeController struct {
@@ -273,4 +274,8 @@ func (be *BeController) ClearResources(ctx context.Context, src *srapi.StarRocks
 // getCnDomainService get the cn service name for dns resolve.
 func (be *BeController) getBeSearchService() string {
 	return "be-domain-search"
+}
+
+func (fc *BeController) getSecret(src *srapi.StarRocksCluster) string {
+	return src.Name + "-" + "secret"
 }

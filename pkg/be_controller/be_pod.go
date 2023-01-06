@@ -161,6 +161,16 @@ func (be *BeController) buildPodTemplate(src *srapi.StarRocksCluster, beconfig m
 			}, {
 				Name:  "USER",
 				Value: "root",
+			}, {
+				Name: "MYSQL_PWD",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: be.getSecret(src),
+						},
+						Key: "mysql_root_password",
+					},
+				},
 			},
 		},
 		Resources:       beSpec.ResourceRequirements,

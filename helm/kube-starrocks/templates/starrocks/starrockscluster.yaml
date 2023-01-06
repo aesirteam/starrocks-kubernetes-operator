@@ -1,0 +1,84 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: {{ template "starrockscluster.name" . }}-secret
+  namespace: {{ template "starrockscluster.namespace" . }}
+data:
+  mysql_root_password: ""
+type: Opaque
+---
+apiVersion: starrocks.com/v1alpha1
+kind: StarRocksCluster
+metadata:
+  name: {{ template "starrockscluster.name" . }}
+  namespace: {{ template "starrockscluster.namespace" . }}
+  labels:
+    cluster: {{ template "starrockscluster.name" . }}
+{{- include "kube-starrocks.labels" . | nindent 4 }}
+spec:
+  starRocksFeSpec:
+    image: "{{ .Values.starrocksFESpec.image.repository }}:{{ .Values.starrocksFESpec.image.tag }}"
+    replicas: {{ .Values.starrocksFESpec.replicas }}
+{{- if .Values.starrocksFESpec.resources }}
+{{ toYaml .Values.starrocksFESpec.resources | indent 4 }}
+{{- end }}
+{{- if .Values.starrocksFESpec.service.type }}
+    service:
+{{- if .Values.starrocksFESpec.service.type }}
+      type: {{ .Values.starrocksFESpec.service.type }}
+{{- end }}
+{{- end }}
+    configMapInfo:
+      configMapName: {{template  "starrockscluster.fe.configmap.name" . }}
+      resolveKey: fe.conf
+{{- if .Values.starrocksFESpec.storageSpec.name }}
+    storageVolumes:
+    - name: {{ .Values.starrocksFESpec.storageSpec.name }}
+      storageClassName: rbd
+      storageSize: {{ .Values.starrocksFESpec.storageSpec.storageSize }}
+      mountPath: {{template "starrockscluster.fe.meta.path" . }}
+{{- end }}
+{{- if .Values.starrocksFESpec.nodeSelector }}
+    nodeSelector:
+    {{ toYaml .Values.starrocksFESpec.nodeSelector | indent 2 }}
+{{- end }}
+
+{{- if .Values.starrocksBeSpec }}
+  starRocksBeSpec:
+    image: "{{ .Values.starrocksBeSpec.image.repository }}:{{ .Values.starrocksBeSpec.image.tag }}"
+    replicas: {{ .Values.starrocksBeSpec.replicas }}
+{{- if .Values.starrocksBeSpec.resource }}
+{{ toYaml .Values.starrocksBeSpec.resource | indent 4 }}
+{{- end }}
+    configMapInfo:
+      configMapName: {{template "starrockscluster.be.configmap.name" . }}
+      resolveKey: be.conf
+{{- if .Values.starrocksBeSpec.storageSpec.name }}
+    storageVolumes:
+    - name: {{ .Values.starrocksFESpec.storageSpec.name }}
+      storageClassName: rbd
+      storageSize: {{ .Values.starrocksBeSpec.storageSpec.storageSize }}
+      mountPath: {{template "starrockscluster.be.data.path" . }}
+{{- end }}
+{{- if .Values.starrocksBeSpec.nodeSelector }}
+    nodeSelector:
+    {{ toYaml .Values.starrocksBeSpec.nodeSelector | indent 2 }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.starrocksCluster.enabledCn }}
+  starRocksCnSpec:
+    image: "{{ .Values.starrocksCnSpec.image.repository }}:{{ .Values.starrocksCnSpec.image.tag }}"
+  {{- if and .Values.starrocksCluster.enabledCn .Values.starrocksCnSpec.autoScalingPolicy }}
+    autoScalingPolicy:
+{{ toYaml .Values.starrocksCnSpec.autoScalingPolicy | indent 6 }}
+  {{- end }}
+{{ toYaml .Values.starrocksCnSpec.resource | indent 4 }}
+    configMapInfo:
+      configMapName: {{template  "starrockscluster.cn.configmap.name" . }}
+      resolveKey: cn.conf
+{{- if .Values.starrocksCnSpec.nodeSelector }}
+    nodeSelector:
+    {{ toYaml .Values.starrocksCnSpec.nodeSelector | indent 2 }}
+{{- end }}
+{{- end }}
